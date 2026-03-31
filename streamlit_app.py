@@ -1,21 +1,32 @@
 import streamlit as st
-import pandas as pd
+from database import get_chemical_costs
+from forecast import apply_inflation
 
 st.title("EIL Chemical Cost Database")
 
-year = st.selectbox(
-    "Select Cost Year",
-    [2024, 2025, 2026, 2027]
+forecast_year = st.number_input("Forecast Year", value=2030)
+
+inflation_rate = st.slider(
+    "Inflation Rate %",
+    0.0,
+    10.0,
+    2.0
 )
 
-data = {
-    "Chemical": ["Methanol", "Glycol", "Corrosion Inhibitor"],
-    "Cost ($/kg)": [1.2, 2.1, 3.5]
-}
+run_forecast = st.button("Run Forecast")
 
-df = pd.DataFrame(data)
 
-st.write("Chemical Cost Table")
+df = get_chemical_costs()
+
+st.subheader("Chemical Cost Library")
+
 st.dataframe(df)
 
-st.write("Selected year:", year)
+
+if run_forecast:
+
+    forecast_df = apply_inflation(df, inflation_rate, forecast_year)
+
+    st.subheader("Forecast Results")
+
+    st.dataframe(forecast_df)
