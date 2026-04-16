@@ -1,32 +1,30 @@
 import streamlit as st
-from database import get_chemical_costs
-from forecast import apply_inflation
+from streamlit_App_Login import login
+import Main_Page_Launcher
 
-st.title("EIL Chemical Cost Database")
-
-forecast_year = st.number_input("Forecast Year", value=2030)
-
-inflation_rate = st.slider(
-    "Inflation Rate %",
-    0.0,
-    10.0,
-    2.0
-)
-
-run_forecast = st.button("Run Forecast")
+# session control
+if "logged_in" not in st.session_state:
+    st.session_state.logged_in = False
 
 
-df = get_chemical_costs()
+# login gate
+if not st.session_state.logged_in:
+    login()
+    st.stop()
 
-st.subheader("Chemical Cost Library")
 
-st.dataframe(df)
+# -----------------------------
+# MAIN APPLICATION
+# -----------------------------
+
+Main_Page_Launcher.main()
 
 
-if run_forecast:
+# logout
+if st.sidebar.button("Logout"):
+    st.session_state.logged_in = False
+    st.rerun()
 
-    forecast_df = apply_inflation(df, inflation_rate, forecast_year)
 
-    st.subheader("Forecast Results")
 
-    st.dataframe(forecast_df)
+

@@ -19,7 +19,7 @@ def get_chemical_costs():
     conn = connect_db()
 
     query = """
-    SELECT Chemical_Name, Cost
+    SELECT Chemical_Name, Base_Cost, Base_Year
     FROM dbo.Chemical_Cost_Library
     """
 
